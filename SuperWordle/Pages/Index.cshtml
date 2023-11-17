@@ -1,10 +1,57 @@
 ﻿@page
+@using SuperWordle.Models
+
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div>
+    @for (int i = 0; i < 6; i++) {
+        @for (int j = 0; j < WordleWord.WORD_LENGTH; j++) {
+            <input id="@i-@j" readonly type="text" maxlength="1" max="1" />
+        }
+        <br />
+    }
 </div>
+
+
+
+<script>
+    var currentRow = 0;
+    var currentColumn = 0
+
+    document.addEventListener('keydown', processKeydown);
+    document.addEventListener('keyup', processKeyup);
+
+    function processKeydown(e) {
+        if (e.code === 'Backspace') {
+            if (currentColumn > 0) {
+                currentColumn = currentColumn - 1;
+            }
+            setInputValue(currentRow, currentColumn, '');
+        }
+    }
+
+    function processKeyup(e) {
+        console.log(e);
+        if (e.code !== 'Backspace') {
+            if (currentColumn < @WordleWord.WORD_LENGTH) {
+                setInputValue(currentRow, currentColumn, e.key);
+                currentColumn = currentColumn + 1;
+            }
+        }
+    }
+
+    function getInput(row, column) {
+        return document.getElementById("" + row + "-" + column);
+    }
+
+    function focusInput(row, column) {
+        getInput(row, column).focus();
+    }
+
+    function setInputValue(row, column, value){
+        getInput(row, column).value = value;
+    }
+</script>
