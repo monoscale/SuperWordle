@@ -20,9 +20,13 @@
 <script>
     var currentRow = 0;
     var currentColumn = 0
+    var bulkAllowedKeys = 'abcdefghijklmnopqrstuvwxyz';
+    var allowedKeys = bulkAllowedKeys.split('');
 
     document.addEventListener('keydown', processKeydown);
     document.addEventListener('keyup', processKeyup);
+
+
 
     function processKeydown(e) {
         if (e.code === 'Backspace') {
@@ -34,8 +38,7 @@
     }
 
     function processKeyup(e) {
-        console.log(e);
-        if (e.code !== 'Backspace') {
+        if (allowedKeys.includes(e.key)) {
             if (currentColumn < @WordleWord.WORD_LENGTH) {
                 setInputValue(currentRow, currentColumn, e.key);
                 currentColumn = currentColumn + 1;
