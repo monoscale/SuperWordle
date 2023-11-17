@@ -6,6 +6,31 @@
     ViewData["Title"] = "Home page";
 }
 
+<style>
+    input {
+        width: 50px;
+        height: 50px;
+        text-align:center;
+        font-size:16px;
+    }
+
+    .guess-correct {
+        background-color: green;
+        color: white;
+    }
+
+    .guess-position {
+        background-color: yellow;
+        color: black;
+    }
+
+    .guess-incorrect {
+        background-color: gray;
+        color: white;
+    }
+</style>
+
+
 <div>
     @for (int i = 0; i < 6; i++) {
         @for (int j = 0; j < WordleWord.WORD_LENGTH; j++) {
@@ -20,13 +45,13 @@
 <script>
     var currentRow = 0;
     var currentColumn = 0
-    
+
     var bulkAllowedKeys = 'abcdefghijklmnopqrstuvwxyz';
     var allowedKeys = bulkAllowedKeys.split('');
-    
-    var allowedWords = ['ADIEU', 'SLATE', 'PINES'] //TODO: retrieve allowed words from server
-    
-    var word = 'SLATE'; //TODO: retrieve word from server
+
+    var allowedWords = ['ADIEU', 'SLATE', 'PINES', 'STEAL'] //TODO: retrieve allowed words from server
+
+    var wordToFind = 'SLATE'; //TODO: retrieve word from server
 
     document.addEventListener('keydown', processKeydown);
     document.addEventListener('keyup', processKeyup);
@@ -38,7 +63,7 @@
                 currentColumn = currentColumn - 1;
             }
             setInputValue(currentRow, currentColumn, '');
-        } else if(e.code === 'Enter'){
+        } else if (e.code === 'Enter') {
             if (currentColumn === @WordleWord.WORD_LENGTH) {
                 evaluateWord(currentRow);
             }
@@ -81,6 +106,7 @@
     function evaluateWord(row) {
         var word = getWord(row);
         if (isWord(word)) {
+            markCharacters(row, word);
             currentRow++;
             currentColumn = 0;
         } else {
@@ -88,7 +114,29 @@
         }
     }
 
-    function isWord(word){
+    function markCharacters(row, word) {
+
+
+
+        for (var i = 0; i < @WordleWord.WORD_LENGTH; i++) {
+
+            var input = getInput(row, i);
+            var charGuess = word[i];
+            var charSolution = wordToFind[i];
+
+            if (charGuess === charSolution) {
+                input.classList.add('guess-correct');
+            } else if (wordToFind.includes(charGuess)) {
+                input.classList.add('guess-position');
+            } else {
+                input.classList.add('guess-incorrect');
+            }
+
+
+        }
+    }
+
+    function isWord(word) {
         return allowedWords.includes(word);
     }
 </script>
