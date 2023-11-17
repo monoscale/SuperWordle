@@ -20,20 +20,28 @@
 <script>
     var currentRow = 0;
     var currentColumn = 0
+    
     var bulkAllowedKeys = 'abcdefghijklmnopqrstuvwxyz';
     var allowedKeys = bulkAllowedKeys.split('');
+    
+    var allowedWords = ['ADIEU', 'SLATE', 'PINES'] //TODO: retrieve allowed words from server
+    
+    var word = 'SLATE'; //TODO: retrieve word from server
 
     document.addEventListener('keydown', processKeydown);
     document.addEventListener('keyup', processKeyup);
 
-
-
     function processKeydown(e) {
+        console.log(e);
         if (e.code === 'Backspace') {
             if (currentColumn > 0) {
                 currentColumn = currentColumn - 1;
             }
             setInputValue(currentRow, currentColumn, '');
+        } else if(e.code === 'Enter'){
+            if (currentColumn === @WordleWord.WORD_LENGTH) {
+                evaluateWord(currentRow);
+            }
         }
     }
 
@@ -54,7 +62,33 @@
         getInput(row, column).focus();
     }
 
-    function setInputValue(row, column, value){
-        getInput(row, column).value = value;
+    function setInputValue(row, column, value) {
+        getInput(row, column).value = value.toUpperCase();
+    }
+
+    function getInputValue(row, column) {
+        return getInput(row, column).value;
+    }
+
+    function getWord(row) {
+        var word = '';
+        for (var i = 0; i < @WordleWord.WORD_LENGTH; i++) {
+            word += getInputValue(row, i);
+        }
+        return word;
+    }
+
+    function evaluateWord(row) {
+        var word = getWord(row);
+        if (isWord(word)) {
+            currentRow++;
+            currentColumn = 0;
+        } else {
+            alert('Not a word');
+        }
+    }
+
+    function isWord(word){
+        return allowedWords.includes(word);
     }
 </script>
