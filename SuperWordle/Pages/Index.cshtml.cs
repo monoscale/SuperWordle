@@ -2,11 +2,13 @@
 
 namespace SuperWordle.Pages {
     public class IndexModel : PageModel {
-        private readonly ILogger<IndexModel> _logger;
         
+        public int WordlesToSolve { get; set; }
+        public int MaximumAttempts { get; set; }
 
-        public IndexModel(ILogger<IndexModel> logger) {
-            _logger = logger;
+        public IndexModel() {
+            WordlesToSolve = 2;
+            MaximumAttempts = 6;
         }
 
         public void OnGet() {
