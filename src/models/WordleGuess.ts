@@ -22,7 +22,7 @@ export class WordleGuess {
     }
 
     public getGuess(): string {
-        return this.characters.join();
+        return this.characters.map(x => x.character).join('');
     }
 
     public setCharacterState(index: number, state: WordleCharacterState) {

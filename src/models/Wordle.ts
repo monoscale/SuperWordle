@@ -30,7 +30,7 @@ export class Wordle {
         for (let i = 0; i < this.word.length; i++) {
             const charWord = this.word[i];
             const charGuess = guess[i];
-
+            console.log(charWord, charGuess);
             if (charWord === charGuess) {
                 this.guesses[this.currentGuessIndex].setCharacterState(i, WordleCharacterState.CORRECT);
             } else if (this.word.includes(charGuess)) {

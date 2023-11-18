@@ -1,6 +1,6 @@
 export enum WordleCharacterState {
-    INITIAL,
-    CORRECT,
-    PRESENT,
-    ABSENT
+    INITIAL = "initial",
+    CORRECT = "correct",
+    PRESENT = "present",
+    ABSENT = "absent"
 }

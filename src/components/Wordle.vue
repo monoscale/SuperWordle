@@ -8,10 +8,7 @@ const attempts = 6;
 
 const wordle = reactive(new Wordle('STEAL'));
 
-let currentRow = 0;
 let currentTile = 0;
-
-const allWords = ['STEAL', 'SLATE', 'PINES', 'ADIEU'];
 
 window.addEventListener('keyup', onKeyup)
 onUnmounted(() => {
@@ -21,7 +18,7 @@ onUnmounted(() => {
 function onKeyup(e: KeyboardEvent) {
     const key = e.key;
     if (/^[a-zA-Z]$/.test(key) && currentTile < wordLength) {
-        fillTile(key as WordleCharacter);
+        fillTile(key.toUpperCase() as WordleCharacter);
         currentTile++;
     } else if (key === 'Backspace' && currentTile > 0) {
         currentTile--;
@@ -42,7 +39,6 @@ function clearTile() {
 
 function checkGuess() {
     wordle.checkGuess();
-
 }
 
 </script>
@@ -50,7 +46,7 @@ function checkGuess() {
 <template>
     <div v-for="(row, index) in wordle.guesses">
         <div v-for="(tile, index) in row.characters">
-            <div class="tile">
+            <div class="tile" :class="tile.state">
                 {{ tile.character }}
             </div>
         </div>
@@ -62,5 +58,20 @@ function checkGuess() {
 .tile {
     padding: 30px;
     border: 1px solid black;
+}
+
+.tile.absent {
+    background-color: gray;
+    color: white;
+}
+
+.tile.present {
+    background-color: yellow;
+    color: black;
+}
+
+.tile.correct {
+    background-color: green;
+    color: white;
 }
 </style>
