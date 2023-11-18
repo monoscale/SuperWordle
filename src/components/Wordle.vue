@@ -56,7 +56,10 @@ function checkGuess() {
 
 <style scoped>
 .tile {
-    padding: 30px;
+    height: 50px;
+    width: 50px;
+    text-align: center;
+    justify-content: center;
     border: 1px solid black;
 }
 

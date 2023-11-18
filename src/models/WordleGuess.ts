@@ -1,5 +1,6 @@
 import { WordleLetter } from "./WordleLetter";
 import type { WordleCharacter } from "./WordleCharacter";
+import type { WordleCharacterState } from "./WordleCharacterState";
 
 export class WordleGuess {
 
