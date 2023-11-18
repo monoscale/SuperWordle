@@ -15,7 +15,7 @@ document.addEventListener('keydown', processKeydown);
 document.addEventListener('keyup', processKeyup);
 
 
-function processKeydown(e) {
+function processKeydown(e: KeyboardEvent): void {
     console.log(e);
     if (e.code === 'Backspace') {
         if (currentColumn > 0) {
@@ -29,7 +29,7 @@ function processKeydown(e) {
     }
 }
 
-function processKeyup(e) {
+function processKeyup(e: KeyboardEvent): void {
     if (allowedKeys.includes(e.key)) {
         if (currentColumn < wordLength) {
             setInputValue(currentRow, currentColumn, e.key);
@@ -38,12 +38,15 @@ function processKeyup(e) {
     }
 }
 
-function getInputs(row, column): NodeListOf<HTMLFormElement> {
-    return document.querySelectorAll(".hidden-" + column + ", .cell-" + row + "-" + column);
+function getInputs(row: number, column: number): NodeListOf<HTMLFormElement> {
+    return document.querySelectorAll("#hidden-" + column + ", .cell-" + row + "-" + column);
 }
 
-function getInputValue(column) {
-    return (document.querySelector(".hidden-" + column) as HTMLFormElement).value;
+function getWordleInputs(row: number, column: number): NodeListOf<HTMLFormElement> {
+    return document.querySelectorAll(".cell-" + row + "-" + column);
+}
+function getInputValue(column: number): any {
+    return (document.querySelector("#hidden-" + column) as HTMLFormElement).value;
 }
 
 function setInputValue(row, column, value): void {
@@ -52,15 +55,15 @@ function setInputValue(row, column, value): void {
     })
 }
 
-function getWord() {
-    var word = '';
+function getWord(): string {
+    var word: string = '';
     for (var i = 0; i < wordLength; i++) {
         word += getInputValue(i);
     }
     return word;
 }
 
-function evaluateWord(row) {
+function evaluateWord(row: number): void {
     var word = getWord();
     if (isWord(word)) {
         markCharacters(row, word);
@@ -71,10 +74,9 @@ function evaluateWord(row) {
     }
 }
 
-function markCharacters(row, word) {
-    
+function markCharacters(row: number, word: string): void {
     for (var i = 0; i < wordLength; i++) {
-        var inputs = getInputs(row, i)
+        var inputs = getWordleInputs(row, i)
         inputs.forEach(function (input) {
             var wordleId = parseInt(input.dataset["wordleId"]);
             var wordToFind = wordsToFind[wordleId];
@@ -91,11 +93,12 @@ function markCharacters(row, word) {
         })
 
     }
-    
+
 
 
 }
 
-function isWord(word) {
+
+function isWord(word: string): boolean {
     return allowedWords.includes(word);
 }

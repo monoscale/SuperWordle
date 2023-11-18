@@ -31,10 +31,13 @@ function processKeyup(e) {
     }
 }
 function getInputs(row, column) {
-    return document.querySelectorAll(".hidden-" + column + ", .cell-" + row + "-" + column);
+    return document.querySelectorAll("#hidden-" + column + ", .cell-" + row + "-" + column);
+}
+function getWordleInputs(row, column) {
+    return document.querySelectorAll(".cell-" + row + "-" + column);
 }
 function getInputValue(column) {
-    return document.querySelector(".hidden-" + column).value;
+    return document.querySelector("#hidden-" + column).value;
 }
 function setInputValue(row, column, value) {
     getInputs(row, column).forEach(function (input) {
@@ -61,9 +64,11 @@ function evaluateWord(row) {
 }
 function markCharacters(row, word) {
     for (var i = 0; i < wordLength; i++) {
-        var inputs = getInputs(row, i);
+        var inputs = getWordleInputs(row, i);
         inputs.forEach(function (input) {
+            console.log(input);
             var wordleId = parseInt(input.dataset["wordleId"]);
+            console.log(wordleId, wordsToFind);
             var wordToFind = wordsToFind[wordleId];
             var charGuess = word[i];
             var charSolution = wordToFind[i];
