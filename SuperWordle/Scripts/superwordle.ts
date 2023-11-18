@@ -38,6 +38,7 @@ function processKeyup(e: KeyboardEvent): void {
     }
 }
 
+//TODO: all these querySelector functions should not exist and inputs should be in an array in memory
 function getInputs(row: number, column: number): NodeListOf<HTMLFormElement> {
     return document.querySelectorAll("#hidden-" + column + ", .cell-" + row + "-" + column);
 }
@@ -93,11 +94,7 @@ function markCharacters(row: number, word: string): void {
         })
 
     }
-
-
-
 }
-
 
 function isWord(word: string): boolean {
     return allowedWords.includes(word);
