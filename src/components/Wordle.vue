@@ -1,21 +1,19 @@
 <script setup lang="ts">
-import { onUnmounted, ref } from 'vue';
-import { WordleLetter } from '../models/WordleLetter'
+import { onUnmounted, reactive } from 'vue';
+import { Wordle } from '../models/Wordle'
 import type { WordleCharacter } from '../models/WordleCharacter'
 
 const wordLength = 5;
 const attempts = 6;
 
-const board = ref(
-    Array.from({ length: attempts }, () =>
-        Array.from({ length: wordLength }, () => (new WordleLetter('A'))))
-);
+const wordle = reactive(new Wordle('STEAL'));
 
 let currentRow = 0;
 let currentTile = 0;
 
-window.addEventListener('keyup', onKeyup)
+const allWords = ['STEAL', 'SLATE', 'PINES', 'ADIEU'];
 
+window.addEventListener('keyup', onKeyup)
 onUnmounted(() => {
     window.removeEventListener('keyup', onKeyup)
 })
@@ -29,27 +27,29 @@ function onKeyup(e: KeyboardEvent) {
         currentTile--;
         clearTile();
     } else if (key === 'Enter') {
-        checkWord();
+        checkGuess();
+        currentTile = 0;
     }
 }
 
 function fillTile(character: WordleCharacter) {
-    board.value[currentRow][currentTile].character = character;
+    wordle.setCharacterGuess(character);
 }
 
 function clearTile() {
-    board.value[currentRow][currentTile].character = '';
+    wordle.clearCharacterGuess();
 }
 
-function checkWord() {
+function checkGuess() {
+    wordle.checkGuess();
 
 }
 
 </script>
 
 <template>
-    <div v-for="(row, index) in board">
-        <div v-for="(tile, index) in row">
+    <div v-for="(row, index) in wordle.guesses">
+        <div v-for="(tile, index) in row.characters">
             <div class="tile">
                 {{ tile.character }}
             </div>
