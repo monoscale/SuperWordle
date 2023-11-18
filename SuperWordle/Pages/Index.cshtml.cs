@@ -7,8 +7,8 @@ namespace SuperWordle.Pages {
         public int MaximumAttempts { get; set; }
 
         public IndexModel() {
-            WordlesToSolve = 2;
-            MaximumAttempts = 6;
+            WordlesToSolve = 4;
+            MaximumAttempts = 20;
         }
 
         public void OnGet() {
