@@ -8,8 +8,9 @@ import { isWordAllowed, getRandomWord } from '../models/Words';
 
 const wordLength = 5;
 const attempts = 6;
+const wordlesToSolve = 4;
 
-const wordles = reactive(Array.from({ length: 2 }, () => (new Wordle(getRandomWord(), attempts))));
+const wordles = reactive(Array.from({ length: wordlesToSolve }, () => (new Wordle(getRandomWord(), attempts))));
 console.log(wordles);
 let currentTile = 0;
 
@@ -23,6 +24,9 @@ function onKeyup(e: KeyboardEvent) {
     if (/^[a-zA-Z]$/.test(key) && currentTile < wordLength) {
         fillTile(key.toUpperCase() as WordleCharacter);
         currentTile++;
+        if (currentTile == wordLength) {
+            checkWordAllowed();
+        }
     } else if (key === 'Backspace' && currentTile > 0) {
         currentTile--;
         getUncompletedWordles().forEach(wordle => wordle.setGuessState(WordleCharacterState.INITIAL));
@@ -41,14 +45,19 @@ function clearTile() {
 }
 
 function checkGuess() {
-    let guess = wordles[0].getGuess();
-    if (isWordAllowed(guess)) {
+    if (checkWordAllowed()) {
         getUncompletedWordles().forEach(wordle => wordle.checkGuess());
         currentTile = 0;
-    } else {
-        getUncompletedWordles().forEach(wordle => wordle.setGuessState(WordleCharacterState.INVALID));
     }
+}
 
+function checkWordAllowed(): boolean {
+    let guess = wordles[0].getGuess();
+    if (!isWordAllowed(guess)) {
+        getUncompletedWordles().forEach(wordle => wordle.setGuessState(WordleCharacterState.INVALID));
+        return false;
+    }
+    return true;
 }
 
 function getUncompletedWordles() {
@@ -58,7 +67,7 @@ function getUncompletedWordles() {
 </script>
 
 <template>
-    <div v-for="(wordle, index) in wordles" v-bind:key="index">
+    <div v-for="(wordle, index) in wordles" v-bind:key="index" class="wordle">
         <div v-for="(row, index) in wordle.guesses" v-bind:key="index">
             <input v-for="(tile, index) in row.characters" v-bind:key="index" disabled class="tile" :class="tile.state"
                 v-bind:value="tile.character" />
@@ -67,6 +76,11 @@ function getUncompletedWordles() {
 </template>
 
 <style scoped>
+.wordle {
+    display: inline-block;
+    margin: 10px;
+}
+
 .tile {
     height: 50px;
     width: 50px;

@@ -6,32 +6,34 @@ export class Wordle {
     public word: string;
     public guesses: WordleGuess[];
     public completed: boolean = false;
-    
+
+    private currentGuess: WordleGuess;
     private maximumAttempts: number;
     private currentGuessIndex: number = 0;
-    
+
     constructor(word: string, maximumAttempts: number) {
         this.word = word;
         this.maximumAttempts = maximumAttempts;
         this.guesses = [new WordleGuess()];
+        this.currentGuess = this.guesses[0];
     }
 
     public setCharacterGuess(character: WordleCharacter) {
-        this.guesses[this.currentGuessIndex].setCharacter(character);
+        this.currentGuess.setCharacter(character);
     }
 
     public setGuessState(state: WordleCharacterState) {
-        for (let i = 0; i < this.guesses[this.currentGuessIndex].characters.length; i++) {
-            this.guesses[this.currentGuessIndex].setCharacterState(i, state);
+        for (let i = 0; i < this.currentGuess.characters.length; i++) {
+            this.currentGuess.setCharacterState(i, state);
         }
     }
 
     public clearCharacterGuess() {
-        this.guesses[this.currentGuessIndex].clearCharacter();
+        this.currentGuess.clearCharacter();
     }
 
     public getGuess(): string {
-        return this.guesses[this.currentGuessIndex].getGuess();
+        return this.currentGuess.getGuess();
     }
 
     public checkGuess(): void {
@@ -41,25 +43,27 @@ export class Wordle {
             const charWord = this.word[i];
             const charGuess = guess[i];
             if (charWord === charGuess) {
-                this.guesses[this.currentGuessIndex].setCharacterState(i, WordleCharacterState.CORRECT);
+                this.currentGuess.setCharacterState(i, WordleCharacterState.CORRECT);
                 correctCount++;
             } else if (this.word.includes(charGuess)) {
 
                 const indexOfChar = this.word.indexOf(charGuess);
                 if (indexOfChar >= 0 && this.word[indexOfChar] == guess[indexOfChar]) {
-                    this.guesses[this.currentGuessIndex].setCharacterState(i, WordleCharacterState.ABSENT);
+                    this.currentGuess.setCharacterState(i, WordleCharacterState.ABSENT);
                 } else {
-                    this.guesses[this.currentGuessIndex].setCharacterState(i, WordleCharacterState.PRESENT);
+                    this.currentGuess.setCharacterState(i, WordleCharacterState.PRESENT);
                 }
             } else {
-                this.guesses[this.currentGuessIndex].setCharacterState(i, WordleCharacterState.ABSENT);
+                this.currentGuess.setCharacterState(i, WordleCharacterState.ABSENT);
             }
         }
         if (correctCount == 5) {
-            this.guesses = [this.guesses[this.currentGuessIndex]];
+            this.guesses = [this.currentGuess];
             this.completed = true;
-        } else {
-            this.guesses.push(new WordleGuess());
+        } else if (this.currentGuessIndex < this.maximumAttempts) {
+            this.currentGuess = new WordleGuess();
+            this.guesses.push(this.currentGuess);
+            
             this.currentGuessIndex++;
         }
     }
