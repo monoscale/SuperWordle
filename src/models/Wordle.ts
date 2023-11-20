@@ -11,11 +11,14 @@ export class Wordle {
     private maximumAttempts: number;
     private currentGuessIndex: number = 0;
 
+    private correctCharPositions: boolean[];
+
     constructor(word: string, maximumAttempts: number) {
         this.word = word;
         this.maximumAttempts = maximumAttempts;
         this.guesses = [new WordleGuess()];
         this.currentGuess = this.guesses[0];
+        this.correctCharPositions = Array.from({ length: 5 }, () => false);
     }
 
     public setCharacterGuess(character: WordleCharacter) {
@@ -45,13 +48,19 @@ export class Wordle {
             if (charWord === charGuess) {
                 this.currentGuess.setCharacterState(i, WordleCharacterState.CORRECT);
                 correctCount++;
+                this.correctCharPositions[i] = true;
             } else if (this.word.includes(charGuess)) {
 
                 const indexOfChar = this.word.indexOf(charGuess);
                 if (indexOfChar >= 0 && this.word[indexOfChar] == guess[indexOfChar]) {
                     this.currentGuess.setCharacterState(i, WordleCharacterState.ABSENT);
                 } else {
-                    this.currentGuess.setCharacterState(i, WordleCharacterState.PRESENT);
+                    if (indexOfChar < i) {
+                        this.currentGuess.setCharacterState(i, WordleCharacterState.ABSENT);
+                    } else {
+                        this.currentGuess.setCharacterState(i, WordleCharacterState.PRESENT);
+                    }
+
                 }
             } else {
                 this.currentGuess.setCharacterState(i, WordleCharacterState.ABSENT);
@@ -63,8 +72,17 @@ export class Wordle {
         } else if (this.currentGuessIndex < this.maximumAttempts) {
             this.currentGuess = new WordleGuess();
             this.guesses.push(this.currentGuess);
-            
+
             this.currentGuessIndex++;
         }
     }
+
+    public getSortOrder(): number {
+        if (this.completed) {
+            return 1000;
+        } 
+        return -1 * this.correctCharPositions.filter(x => x == true).length;
+    }
+
+
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onUnmounted, reactive } from 'vue';
+import { onUnmounted, reactive, ref } from 'vue';
 import { Wordle } from '../models/Wordle';
 
 import type { WordleCharacter } from '../models/WordleCharacter'
@@ -7,12 +7,15 @@ import { WordleCharacterState } from '@/models/WordleCharacterState';
 import { isWordAllowed, getRandomWord } from '../models/Words';
 
 const wordLength = 5;
-const attempts = 6;
-const wordlesToSolve = 4;
+const wordlesToSolve = 128;
+const attempts = wordlesToSolve + 5;
 
-const wordles = reactive(Array.from({ length: wordlesToSolve }, () => (new Wordle(getRandomWord(), attempts))));
-console.log(wordles);
+
+
+let wordles = reactive(Array.from({ length: wordlesToSolve }, () => (new Wordle(getRandomWord(), attempts))));
+
 let currentTile = 0;
+let remainingAttempts = ref(attempts);
 
 window.addEventListener('keyup', onKeyup)
 onUnmounted(() => {
@@ -48,6 +51,8 @@ function checkGuess() {
     if (checkWordAllowed()) {
         getUncompletedWordles().forEach(wordle => wordle.checkGuess());
         currentTile = 0;
+        remainingAttempts.value--;
+        wordles = wordles.sort((a, b) => a.getSortOrder() - b.getSortOrder());
     }
 }
 
@@ -67,10 +72,14 @@ function getUncompletedWordles() {
 </script>
 
 <template>
-    <div v-for="(wordle, index) in wordles" v-bind:key="index" class="wordle">
-        <div v-for="(row, index) in wordle.guesses" v-bind:key="index">
-            <input v-for="(tile, index) in row.characters" v-bind:key="index" disabled class="tile" :class="tile.state"
-                v-bind:value="tile.character" />
+    {{ remainingAttempts }}
+
+    <div>
+        <div v-for="(wordle, index) in wordles" v-bind:key="index" class="wordle">
+            <div v-for="(row, index) in wordle.guesses" v-bind:key="index">
+                <input v-for="(tile, index) in row.characters" v-bind:key="index" disabled class="tile" :class="tile.state"
+                    v-bind:value="tile.character" />
+            </div>
         </div>
     </div>
 </template>
@@ -78,17 +87,16 @@ function getUncompletedWordles() {
 <style scoped>
 .wordle {
     display: inline-block;
-    margin: 10px;
+    margin: 5px;
 }
 
 .tile {
-    height: 50px;
-    width: 50px;
+    height: 25px;
+    width: 25px;
     text-align: center;
     justify-content: center;
     border: 1px solid black;
     box-shadow: none;
-    border-radius: 2px;
     display: inline-block;
 }
 
