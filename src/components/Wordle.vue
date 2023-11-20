@@ -44,13 +44,8 @@ function checkGuess() {
 </script>
 
 <template>
-    <div v-for="(row, index) in wordle.guesses">
-        <div v-for="(tile, index) in row.characters">
-            <div class="tile" :class="tile.state">
-                {{ tile.character }}
-            </div>
-        </div>
-        <br>
+    <div v-for="(row, index) in wordle.guesses" v-bind:key="index">
+        <input v-for="(tile, index) in row.characters" v-bind:key="index" disabled class="tile" :class="tile.state" v-bind:value="tile.character" />  
     </div>
 </template>
 
@@ -61,6 +56,7 @@ function checkGuess() {
     text-align: center;
     justify-content: center;
     border: 1px solid black;
+    display: inline-block;
 }
 
 .tile.absent {

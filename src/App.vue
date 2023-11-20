@@ -3,11 +3,9 @@ import Wordle from './components/Wordle.vue'
 </script>
 
 <template>
-  <header>
-    <div class="wrapper">
-      <Wordle />
-    </div>
-  </header>
+  <div class="wrapper">
+    <Wordle />
+  </div>
 </template>
 
 <style scoped>
