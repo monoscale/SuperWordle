@@ -6,11 +6,14 @@ export class Wordle {
     public word: string;
     public guesses: WordleGuess[];
     public completed: boolean = false;
+    
+    private maximumAttempts: number;
     private currentGuessIndex: number = 0;
-
+    
     constructor(word: string, maximumAttempts: number) {
         this.word = word;
-        this.guesses = Array.from({ length: maximumAttempts }, () => (new WordleGuess()));
+        this.maximumAttempts = maximumAttempts;
+        this.guesses = [new WordleGuess()];
     }
 
     public setCharacterGuess(character: WordleCharacter) {
@@ -37,7 +40,6 @@ export class Wordle {
         for (let i = 0; i < this.word.length; i++) {
             const charWord = this.word[i];
             const charGuess = guess[i];
-            console.log(charWord, charGuess);
             if (charWord === charGuess) {
                 this.guesses[this.currentGuessIndex].setCharacterState(i, WordleCharacterState.CORRECT);
                 correctCount++;
@@ -54,8 +56,10 @@ export class Wordle {
             }
         }
         if (correctCount == 5) {
+            this.guesses = [this.guesses[this.currentGuessIndex]];
             this.completed = true;
         } else {
+            this.guesses.push(new WordleGuess());
             this.currentGuessIndex++;
         }
     }
