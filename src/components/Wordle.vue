@@ -31,7 +31,7 @@ function onKeyup(e: KeyboardEvent) {
         currentTile--;
         getUncompletedWordles().forEach(wordle => wordle.setGuessState(WordleCharacterState.INITIAL));
         clearTile();
-    } else if (key === 'Enter') {
+    } else if (currentTile == wordLength && key === 'Enter') {
         checkGuess();
     }
 }
