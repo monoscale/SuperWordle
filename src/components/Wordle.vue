@@ -9,9 +9,8 @@ import { isWordAllowed, getRandomWord } from '../models/Words';
 const wordLength = 5;
 const attempts = 6;
 
-//this.guesses = Array.from({ length: maximumAttempts }, () => (new WordleGuess()));
 const wordles = reactive(Array.from({ length: 2 }, () => (new Wordle(getRandomWord(), attempts))));
-
+console.log(wordles);
 let currentTile = 0;
 
 window.addEventListener('keyup', onKeyup)
@@ -26,7 +25,7 @@ function onKeyup(e: KeyboardEvent) {
         currentTile++;
     } else if (key === 'Backspace' && currentTile > 0) {
         currentTile--;
-        wordles.forEach(wordle => wordle.setGuessState(WordleCharacterState.INITIAL));
+        getUncompletedWordles().forEach(wordle => wordle.setGuessState(WordleCharacterState.INITIAL));
         clearTile();
     } else if (key === 'Enter') {
         checkGuess();
@@ -34,22 +33,26 @@ function onKeyup(e: KeyboardEvent) {
 }
 
 function fillTile(character: WordleCharacter) {
-    wordles.forEach(wordle => wordle.setCharacterGuess(character));
+    getUncompletedWordles().forEach(wordle => wordle.setCharacterGuess(character));
 }
 
 function clearTile() {
-    wordles.forEach(wordle => wordle.clearCharacterGuess());
+    getUncompletedWordles().forEach(wordle => wordle.clearCharacterGuess());
 }
 
 function checkGuess() {
     let guess = wordles[0].getGuess();
     if (isWordAllowed(guess)) {
-        wordles.forEach(wordle => wordle.checkGuess());
+        getUncompletedWordles().forEach(wordle => wordle.checkGuess());
         currentTile = 0;
     } else {
-        wordles.forEach(wordle => wordle.setGuessState(WordleCharacterState.INVALID));
+        getUncompletedWordles().forEach(wordle => wordle.setGuessState(WordleCharacterState.INVALID));
     }
 
+}
+
+function getUncompletedWordles() {
+    return wordles.filter(x => !x.completed);
 }
 
 </script>
@@ -73,7 +76,6 @@ function checkGuess() {
     box-shadow: none;
     border-radius: 2px;
     display: inline-block;
-    margin: 10px 5px;
 }
 
 .tile.absent {

@@ -5,12 +5,12 @@ import { WordleGuess } from "./WordleGuess";
 export class Wordle {
     public word: string;
     public guesses: WordleGuess[];
-    private currentGuessIndex: number;
+    public completed: boolean = false;
+    private currentGuessIndex: number = 0;
 
     constructor(word: string, maximumAttempts: number) {
         this.word = word;
         this.guesses = Array.from({ length: maximumAttempts }, () => (new WordleGuess()));
-        this.currentGuessIndex = 0;
     }
 
     public setCharacterGuess(character: WordleCharacter) {
@@ -18,7 +18,7 @@ export class Wordle {
     }
 
     public setGuessState(state: WordleCharacterState) {
-        for(let i = 0; i < this.guesses[this.currentGuessIndex].characters.length; i++) {
+        for (let i = 0; i < this.guesses[this.currentGuessIndex].characters.length; i++) {
             this.guesses[this.currentGuessIndex].setCharacterState(i, state);
         }
     }
@@ -33,14 +33,16 @@ export class Wordle {
 
     public checkGuess(): void {
         const guess = this.getGuess();
+        let correctCount: number = 0;
         for (let i = 0; i < this.word.length; i++) {
             const charWord = this.word[i];
             const charGuess = guess[i];
             console.log(charWord, charGuess);
             if (charWord === charGuess) {
                 this.guesses[this.currentGuessIndex].setCharacterState(i, WordleCharacterState.CORRECT);
+                correctCount++;
             } else if (this.word.includes(charGuess)) {
-                
+
                 const indexOfChar = this.word.indexOf(charGuess);
                 if (indexOfChar >= 0 && this.word[indexOfChar] == guess[indexOfChar]) {
                     this.guesses[this.currentGuessIndex].setCharacterState(i, WordleCharacterState.ABSENT);
@@ -51,6 +53,10 @@ export class Wordle {
                 this.guesses[this.currentGuessIndex].setCharacterState(i, WordleCharacterState.ABSENT);
             }
         }
-        this.currentGuessIndex++;
+        if (correctCount == 5) {
+            this.completed = true;
+        } else {
+            this.currentGuessIndex++;
+        }
     }
 }

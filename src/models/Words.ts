@@ -4,12 +4,9 @@ export function getRandomWord(): string {
   return answers[index];
 }
 
-
 export function isWordAllowed(word: string): boolean {
-  console.log(word);
   return allWords.includes(word);
 }
-
 
 const answers = [
   'cigar',
