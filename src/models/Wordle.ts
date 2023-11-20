@@ -34,8 +34,9 @@ export class Wordle {
             if (charWord === charGuess) {
                 this.guesses[this.currentGuessIndex].setCharacterState(i, WordleCharacterState.CORRECT);
             } else if (this.word.includes(charGuess)) {
+                
                 const indexOfChar = this.word.indexOf(charGuess);
-                if (indexOfChar > 0 && this.word[indexOfChar] == guess[indexOfChar]) {
+                if (indexOfChar >= 0 && this.word[indexOfChar] == guess[indexOfChar]) {
                     this.guesses[this.currentGuessIndex].setCharacterState(i, WordleCharacterState.ABSENT);
                 } else {
                     this.guesses[this.currentGuessIndex].setCharacterState(i, WordleCharacterState.PRESENT);
