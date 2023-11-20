@@ -9,7 +9,8 @@ import { isWordAllowed, getRandomWord } from '../models/Words';
 const wordLength = 5;
 const attempts = 6;
 
-const wordle = reactive(new Wordle(getRandomWord()));
+//this.guesses = Array.from({ length: maximumAttempts }, () => (new WordleGuess()));
+const wordles = reactive(Array.from({ length: 2 }, () => (new Wordle(getRandomWord(), attempts))));
 
 let currentTile = 0;
 
@@ -25,7 +26,7 @@ function onKeyup(e: KeyboardEvent) {
         currentTile++;
     } else if (key === 'Backspace' && currentTile > 0) {
         currentTile--;
-        wordle.setGuessState(WordleCharacterState.INITIAL);
+        wordles.forEach(wordle => wordle.setGuessState(WordleCharacterState.INITIAL));
         clearTile();
     } else if (key === 'Enter') {
         checkGuess();
@@ -33,20 +34,20 @@ function onKeyup(e: KeyboardEvent) {
 }
 
 function fillTile(character: WordleCharacter) {
-    wordle.setCharacterGuess(character);
+    wordles.forEach(wordle => wordle.setCharacterGuess(character));
 }
 
 function clearTile() {
-    wordle.clearCharacterGuess();
+    wordles.forEach(wordle => wordle.clearCharacterGuess());
 }
 
 function checkGuess() {
-    let guess = wordle.getGuess();
+    let guess = wordles[0].getGuess();
     if (isWordAllowed(guess)) {
-        wordle.checkGuess();
+        wordles.forEach(wordle => wordle.checkGuess());
         currentTile = 0;
     } else {
-        wordle.setGuessState(WordleCharacterState.INVALID);
+        wordles.forEach(wordle => wordle.setGuessState(WordleCharacterState.INVALID));
     }
 
 }
@@ -54,9 +55,11 @@ function checkGuess() {
 </script>
 
 <template>
-    <div v-for="(row, index) in wordle.guesses" v-bind:key="index">
-        <input v-for="(tile, index) in row.characters" v-bind:key="index" disabled class="tile" :class="tile.state"
-            v-bind:value="tile.character" />
+    <div v-for="(wordle, index) in wordles" v-bind:key="index">
+        <div v-for="(row, index) in wordle.guesses" v-bind:key="index">
+            <input v-for="(tile, index) in row.characters" v-bind:key="index" disabled class="tile" :class="tile.state"
+                v-bind:value="tile.character" />
+        </div>
     </div>
 </template>
 

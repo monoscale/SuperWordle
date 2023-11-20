@@ -7,9 +7,9 @@ export class Wordle {
     public guesses: WordleGuess[];
     private currentGuessIndex: number;
 
-    constructor(word: string) {
+    constructor(word: string, maximumAttempts: number) {
         this.word = word;
-        this.guesses = Array.from({ length: 6 }, () => (new WordleGuess()));
+        this.guesses = Array.from({ length: maximumAttempts }, () => (new WordleGuess()));
         this.currentGuessIndex = 0;
     }
 
