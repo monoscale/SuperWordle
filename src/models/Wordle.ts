@@ -17,6 +17,12 @@ export class Wordle {
         this.guesses[this.currentGuessIndex].setCharacter(character);
     }
 
+    public setGuessState(state: WordleCharacterState) {
+        for(let i = 0; i < this.guesses[this.currentGuessIndex].characters.length; i++) {
+            this.guesses[this.currentGuessIndex].setCharacterState(i, state);
+        }
+    }
+
     public clearCharacterGuess() {
         this.guesses[this.currentGuessIndex].clearCharacter();
     }

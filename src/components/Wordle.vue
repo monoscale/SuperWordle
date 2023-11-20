@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { onUnmounted, reactive } from 'vue';
-import { Wordle } from '../models/Wordle'
+import { Wordle } from '../models/Wordle';
+
 import type { WordleCharacter } from '../models/WordleCharacter'
+import { WordleCharacterState } from '@/models/WordleCharacterState';
+import { isWordAllowed, getRandomWord } from '../models/Words';
 
 const wordLength = 5;
 const attempts = 6;
 
-const wordle = reactive(new Wordle('STEAL'));
+const wordle = reactive(new Wordle(getRandomWord()));
 
 let currentTile = 0;
 
@@ -22,10 +25,10 @@ function onKeyup(e: KeyboardEvent) {
         currentTile++;
     } else if (key === 'Backspace' && currentTile > 0) {
         currentTile--;
+        wordle.setGuessState(WordleCharacterState.INITIAL);
         clearTile();
     } else if (key === 'Enter') {
         checkGuess();
-        currentTile = 0;
     }
 }
 
@@ -38,14 +41,22 @@ function clearTile() {
 }
 
 function checkGuess() {
-    wordle.checkGuess();
+    let guess = wordle.getGuess();
+    if (isWordAllowed(guess)) {
+        wordle.checkGuess();
+        currentTile = 0;
+    } else {
+        wordle.setGuessState(WordleCharacterState.INVALID);
+    }
+
 }
 
 </script>
 
 <template>
     <div v-for="(row, index) in wordle.guesses" v-bind:key="index">
-        <input v-for="(tile, index) in row.characters" v-bind:key="index" disabled class="tile" :class="tile.state" v-bind:value="tile.character" />  
+        <input v-for="(tile, index) in row.characters" v-bind:key="index" disabled class="tile" :class="tile.state"
+            v-bind:value="tile.character" />
     </div>
 </template>
 
@@ -56,7 +67,10 @@ function checkGuess() {
     text-align: center;
     justify-content: center;
     border: 1px solid black;
+    box-shadow: none;
+    border-radius: 2px;
     display: inline-block;
+    margin: 10px 5px;
 }
 
 .tile.absent {
@@ -71,6 +85,11 @@ function checkGuess() {
 
 .tile.correct {
     background-color: green;
+    color: white;
+}
+
+.tile.invalid {
+    background-color: red;
     color: white;
 }
 </style>
