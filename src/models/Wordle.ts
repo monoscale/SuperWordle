@@ -14,7 +14,7 @@ export class Wordle {
 
     constructor(word: string, maximumAttempts: number) {
         this.word = word;
-        this.maximumAttempts = maximumAttempts;
+        this.maximumAttempts = maximumAttempts - 1; // minus one because of zero based indexing
         this.guesses = [new WordleGuess()];
         this.currentGuess = this.guesses[0];
         this.knownCharacters = Array.from({ length: 5 }, () => '');

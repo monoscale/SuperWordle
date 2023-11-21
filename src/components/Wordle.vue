@@ -7,10 +7,10 @@ import { WordleCharacterState } from '@/models/WordleCharacterState';
 import { isWordAllowed, getRandomWord } from '../models/Words';
 
 const wordLength = 5;
-const wordlesToSolve = 128;
-const attempts = wordlesToSolve + Math.log2(wordlesToSolve) + 1;
+const wordlesToSolve = 2;
+const attempts = wordlesToSolve + Math.max(Math.log2(wordlesToSolve), 5) + 1;
 
-
+let message = ref('');
 
 let wordles = reactive(Array.from({ length: wordlesToSolve }, () => (new Wordle(getRandomWord(), attempts))));
 
@@ -54,6 +54,12 @@ function checkGuess() {
         remainingAttempts.value--;
         wordles = wordles.sort((a, b) => a.getSortOrder() - b.getSortOrder());
     }
+
+    if (wordles.filter(x => !x.completed).length === 0) {
+        message.value = 'You win';
+    } else if (remainingAttempts.value === 0) {
+        message.value = 'You lose'
+    }
 }
 
 function checkWordAllowed(): boolean {
@@ -72,7 +78,9 @@ function getUncompletedWordles() {
 </script>
 
 <template>
-    {{ remainingAttempts }}
+    <p v-if="remainingAttempts > 0">Attempts remaining: {{ remainingAttempts }}</p>
+    <p>{{ message }}</p>
+    
 
     <div>
         <div v-for="(wordle, index) in wordles" v-bind:key="index" class="wordle">
@@ -82,9 +90,10 @@ function getUncompletedWordles() {
             </div>
 
             <span v-if="!wordle.completed">
-                <input v-for="(character, index) in wordle.knownCharacters" v-bind:key="index" disabled v-bind:value="character"  class="tile"/>
+                <input v-for="(character, index) in wordle.knownCharacters" v-bind:key="index" disabled
+                    v-bind:value="character" class="tile hint" />
             </span>
-            
+
         </div>
     </div>
 </template>
@@ -100,9 +109,18 @@ function getUncompletedWordles() {
     width: 25px;
     text-align: center;
     justify-content: center;
-    border: 1px solid black;
+    border: 0.25px solid black;
     box-shadow: none;
+    margin-right: 1px;
     display: inline-block;
+}
+
+.tile.hint {
+    border-radius: 5px;
+}
+
+.tile.input {
+    background-color: beige;
 }
 
 .tile.absent {

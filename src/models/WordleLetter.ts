@@ -8,6 +8,6 @@ export class WordleLetter {
 
     constructor(character: WordleCharacter = ''){
         this.character = character;
-        this.state = WordleCharacterState.INITIAL;
+        this.state = WordleCharacterState.INPUT;
     }
 }
