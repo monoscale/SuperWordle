@@ -5,18 +5,20 @@ import { Wordle } from '../models/Wordle';
 import type { WordleCharacter } from '../models/WordleCharacter'
 import { WordleCharacterState } from '@/models/WordleCharacterState';
 import { isWordAllowed, getRandomWord } from '../models/Words';
+import { Keyboard } from '@/models/Keyboard';
 
 const wordLength = 5;
-const wordlesToSolve = 2;
+const wordlesToSolve = 8;
 const attempts = wordlesToSolve + Math.max(Math.log2(wordlesToSolve), 5) + 1;
 
 let message = ref('');
 let gameFinished = ref(false);
-
-let wordles = reactive(Array.from({ length: wordlesToSolve }, () => (new Wordle(getRandomWord(), attempts))));
-
 let currentTile = 0;
 let remainingAttempts = ref(attempts);
+
+let wordles = reactive(Array.from({ length: wordlesToSolve }, () => (new Wordle(getRandomWord(), attempts))));
+let keyboard = reactive(new Keyboard());
+
 
 window.addEventListener('keyup', onKeyup)
 onUnmounted(() => {
@@ -33,7 +35,7 @@ function onKeyup(e: KeyboardEvent) {
         }
     } else if (key === 'Backspace' && currentTile > 0) {
         currentTile--;
-        getUncompletedWordles().forEach(wordle => wordle.setGuessState(WordleCharacterState.INITIAL));
+        getUncompletedWordles().forEach(wordle => wordle.setGuessState(WordleCharacterState.INPUT));
         clearTile();
     } else if (currentTile == wordLength && key === 'Enter') {
         checkGuess();
@@ -50,6 +52,7 @@ function clearTile() {
 
 function checkGuess() {
     if (checkWordAllowed()) {
+        keyboard.setCharactersFromWordAsUsed(wordles[0].getGuess());
         getUncompletedWordles().forEach(wordle => wordle.checkGuess());
         currentTile = 0;
         remainingAttempts.value--;
@@ -84,6 +87,13 @@ function getUncompletedWordles() {
     <p v-if="remainingAttempts > 0">Attempts remaining: {{ remainingAttempts }}</p>
     <p>{{ message }}</p>
 
+    <div>
+        <div v-for="(keyboardRow, index) in keyboard.getKeyboardLayout()" v-bind:key="index">
+            <span v-for="(character, index) in keyboardRow" v-bind:key="index" class="tile" :class="character.state">
+                {{ character.character }}
+            </span>
+        </div>
+    </div>
 
     <div>
         <div v-for="(wordle, index) in wordles" v-bind:key="index" class="wordle">
@@ -107,6 +117,7 @@ function getUncompletedWordles() {
 .wordle {
     display: inline-block;
     margin: 5px;
+    vertical-align: top;
 }
 
 .tile {
@@ -146,5 +157,9 @@ function getUncompletedWordles() {
 .tile.invalid {
     background-color: red;
     color: white;
+}
+
+.tile.used {
+    background-color:lime;
 }
 </style>
