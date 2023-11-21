@@ -8,7 +8,7 @@ import { isWordAllowed, getRandomWord } from '../models/Words';
 
 const wordLength = 5;
 const wordlesToSolve = 128;
-const attempts = wordlesToSolve + 5;
+const attempts = wordlesToSolve + Math.log2(wordlesToSolve) + 1;
 
 
 
@@ -80,6 +80,11 @@ function getUncompletedWordles() {
                 <input v-for="(tile, index) in row.characters" v-bind:key="index" disabled class="tile" :class="tile.state"
                     v-bind:value="tile.character" />
             </div>
+
+            <span v-if="!wordle.completed">
+                <input v-for="(character, index) in wordle.knownCharacters" v-bind:key="index" disabled v-bind:value="character"  class="tile"/>
+            </span>
+            
         </div>
     </div>
 </template>
@@ -101,7 +106,7 @@ function getUncompletedWordles() {
 }
 
 .tile.absent {
-    background-color: gray;
+    background-color: lightgray;
     color: white;
 }
 
@@ -111,8 +116,8 @@ function getUncompletedWordles() {
 }
 
 .tile.correct {
-    background-color: green;
-    color: white;
+    background-color: lime;
+    color: black;
 }
 
 .tile.invalid {

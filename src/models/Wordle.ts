@@ -6,19 +6,18 @@ export class Wordle {
     public word: string;
     public guesses: WordleGuess[];
     public completed: boolean = false;
-    
+    public knownCharacters: WordleCharacter[];
+
     private currentGuess: WordleGuess;
     private maximumAttempts: number;
     private currentGuessIndex: number = 0;
-
-    private correctCharPositions: boolean[];
 
     constructor(word: string, maximumAttempts: number) {
         this.word = word;
         this.maximumAttempts = maximumAttempts;
         this.guesses = [new WordleGuess()];
         this.currentGuess = this.guesses[0];
-        this.correctCharPositions = Array.from({ length: 5 }, () => false);
+        this.knownCharacters = Array.from({ length: 5 }, () => '');
     }
 
     public setCharacterGuess(character: WordleCharacter) {
@@ -41,22 +40,22 @@ export class Wordle {
 
     public checkGuess(): void {
         const guess = this.getGuess();
-        let correctCount: number = 0;
+        let correctCount = 0;
         for (let i = 0; i < this.word.length; i++) {
             const charWord = this.word[i];
             const charGuess = guess[i];
             if (charWord === charGuess) {
                 this.currentGuess.setCharacterState(i, WordleCharacterState.CORRECT);
+                this.knownCharacters[i] = charWord as WordleCharacter;
                 correctCount++;
-                this.correctCharPositions[i] = true;
             } else if (this.word.includes(charGuess)) {
                 const indexOfChar = this.word.indexOf(charGuess);
                 if (indexOfChar >= 0 && this.word[indexOfChar] == guess[indexOfChar]) {
                     this.currentGuess.setCharacterState(i, WordleCharacterState.ABSENT);
                 } else {
                     let charWordOccurences = this.word.split(charGuess).length - 1;
-                    for(let j = 0; j < i; j++){
-                        if(guess[j] == charGuess){       
+                    for (let j = 0; j < i; j++) {
+                        if (guess[j] == charGuess) {
                             charWordOccurences--;
                         }
                     }
@@ -85,8 +84,12 @@ export class Wordle {
     public getSortOrder(): number {
         if (this.completed) {
             return 1000;
-        } 
-        return -1 * this.correctCharPositions.filter(x => x == true).length;
+        }
+        return -1 * this.getKnownCharactersCount();
+    }
+
+    private getKnownCharactersCount(){
+        return this.knownCharacters.filter(x => x !== '').length;
     }
 
 
