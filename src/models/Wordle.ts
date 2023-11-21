@@ -6,7 +6,7 @@ export class Wordle {
     public word: string;
     public guesses: WordleGuess[];
     public completed: boolean = false;
-
+    
     private currentGuess: WordleGuess;
     private maximumAttempts: number;
     private currentGuessIndex: number = 0;
@@ -50,15 +50,20 @@ export class Wordle {
                 correctCount++;
                 this.correctCharPositions[i] = true;
             } else if (this.word.includes(charGuess)) {
-
                 const indexOfChar = this.word.indexOf(charGuess);
                 if (indexOfChar >= 0 && this.word[indexOfChar] == guess[indexOfChar]) {
                     this.currentGuess.setCharacterState(i, WordleCharacterState.ABSENT);
                 } else {
-                    if (indexOfChar < i) {
-                        this.currentGuess.setCharacterState(i, WordleCharacterState.ABSENT);
-                    } else {
+                    let charWordOccurences = this.word.split(charGuess).length - 1;
+                    for(let j = 0; j < i; j++){
+                        if(guess[j] == charGuess){       
+                            charWordOccurences--;
+                        }
+                    }
+                    if (charWordOccurences > 0) {
                         this.currentGuess.setCharacterState(i, WordleCharacterState.PRESENT);
+                    } else {
+                        this.currentGuess.setCharacterState(i, WordleCharacterState.ABSENT);
                     }
 
                 }
