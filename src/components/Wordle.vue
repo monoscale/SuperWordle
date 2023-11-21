@@ -11,6 +11,7 @@ const wordlesToSolve = 2;
 const attempts = wordlesToSolve + Math.max(Math.log2(wordlesToSolve), 5) + 1;
 
 let message = ref('');
+let gameFinished = ref(false);
 
 let wordles = reactive(Array.from({ length: wordlesToSolve }, () => (new Wordle(getRandomWord(), attempts))));
 
@@ -57,8 +58,10 @@ function checkGuess() {
 
     if (wordles.filter(x => !x.completed).length === 0) {
         message.value = 'You win';
+        gameFinished.value = true;
     } else if (remainingAttempts.value === 0) {
-        message.value = 'You lose'
+        message.value = 'You lose';
+        gameFinished.value = true;
     }
 }
 
@@ -80,16 +83,18 @@ function getUncompletedWordles() {
 <template>
     <p v-if="remainingAttempts > 0">Attempts remaining: {{ remainingAttempts }}</p>
     <p>{{ message }}</p>
-    
+
 
     <div>
         <div v-for="(wordle, index) in wordles" v-bind:key="index" class="wordle">
-            <div v-for="(row, index) in wordle.guesses" v-bind:key="index">
-                <input v-for="(tile, index) in row.characters" v-bind:key="index" disabled class="tile" :class="tile.state"
-                    v-bind:value="tile.character" />
+            <div v-if="!wordle.completed || gameFinished">
+                <div v-for="(row, index) in wordle.guesses" v-bind:key="index">
+                    <input v-for="(tile, index) in row.characters" v-bind:key="index" disabled class="tile"
+                        :class="tile.state" v-bind:value="tile.character" />
+                </div>
             </div>
 
-            <span v-if="!wordle.completed">
+            <span>
                 <input v-for="(character, index) in wordle.knownCharacters" v-bind:key="index" disabled
                     v-bind:value="character" class="tile hint" />
             </span>

@@ -71,7 +71,6 @@ export class Wordle {
             }
         }
         if (correctCount == 5) {
-            this.guesses = [this.currentGuess];
             this.completed = true;
         } else if (this.currentGuessIndex < this.maximumAttempts) {
             this.currentGuess = new WordleGuess();
