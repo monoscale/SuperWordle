@@ -4,7 +4,7 @@ import { Wordle } from '../models/Wordle';
 
 import type { WordleCharacter } from '../models/WordleCharacter'
 import { WordleCharacterState } from '@/models/WordleCharacterState';
-import { isWordAllowed, getRandomWord } from '../models/Words';
+import { isWordAllowed, getWordsOfTheDay } from '../models/Words';
 import { Keyboard } from '@/models/Keyboard';
 
 const wordLength = 5;
@@ -16,7 +16,9 @@ let gameFinished = ref(false);
 let currentTile = 0;
 let remainingAttempts = ref(attempts);
 
-let wordles = reactive(Array.from({ length: wordlesToSolve }, () => (new Wordle(getRandomWord(), attempts))));
+
+const words = getWordsOfTheDay(wordlesToSolve);
+let wordles = reactive(Array.from({ length: wordlesToSolve }, (val, index) => (new Wordle(words[index], attempts))));
 let keyboard = reactive(new Keyboard());
 
 

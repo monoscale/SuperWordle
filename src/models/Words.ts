@@ -1,7 +1,17 @@
 export function getRandomWord(): string {
   const index = Math.floor(Math.random() * answers.length + 1);
-  console.log(answers[index]);
   return answers[index];
+}
+
+export function getWordsOfTheDay(count: number): string[]{
+  const date = new Date();
+  const modulo = answers.length;
+  const startIndex = (date.getDate() * date.getMonth()) + date.getFullYear() % modulo;
+  const words: string[] = [];
+  for(let i = startIndex; i < startIndex + count;i++){
+    words.push(answers[i]);
+  }
+  return words;
 }
 
 export function isWordAllowed(word: string): boolean {
