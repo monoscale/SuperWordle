@@ -6,7 +6,7 @@ export function getRandomWord(): string {
 export function getWordsOfTheDay(count: number): string[]{
   const date = new Date();
   const modulo = answers.length;
-  const startIndex = (date.getDate() * date.getMonth()) + date.getFullYear() % modulo;
+  const startIndex = Math.min(0, ((date.getDate() * date.getMonth()) + date.getFullYear() % modulo) - count);
   const words: string[] = [];
   for(let i = startIndex; i < startIndex + count;i++){
     words.push(answers[i]);

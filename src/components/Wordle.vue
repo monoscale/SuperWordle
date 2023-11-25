@@ -8,7 +8,7 @@ import { isWordAllowed, getWordsOfTheDay } from '../models/Words';
 import { Keyboard } from '@/models/Keyboard';
 
 const wordLength = 5;
-const wordlesToSolve = 8;
+const wordlesToSolve = 64;
 const attempts = wordlesToSolve + Math.max(Math.log2(wordlesToSolve), 5) + 1;
 
 let message = ref('');
