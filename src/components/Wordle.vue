@@ -14,7 +14,7 @@ const attempts = wordlesToSolve + Math.max(Math.log2(wordlesToSolve), 5);
 let gameFinished = ref(false);
 let currentTile = 0;
 let remainingAttempts = ref(attempts);
-
+let foundWords: string[] = [];
 const words = getWordsOfTheDay(wordlesToSolve);
 let wordles = reactive(Array.from({ length: wordlesToSolve }, (val, index) => (new Wordle(words[index], attempts))));
 let keyboard = reactive(new Keyboard());
@@ -52,7 +52,14 @@ function clearTile(): void {
 function checkGuess(): void {
     if (checkWordAllowed()) {
         keyboard.setCharactersFromWordAsUsed(wordles[0].getGuess());
-        getUncompletedWordles().forEach(wordle => wordle.checkGuess());
+        const uncompletedWordles = getUncompletedWordles();
+        for(let i = 0; i < uncompletedWordles.length; i++){
+            const wordle = uncompletedWordles[i];
+            wordle.checkGuess()
+            if(wordle.completed){
+                foundWords.push(wordle.word);
+            }
+        }
 
         setTimeout(() => {
             currentTile = 0;
@@ -99,7 +106,7 @@ function getUncompletedWordles(): Wordle[] {
 <template>
     <p>Attempts remaining: {{ remainingAttempts }}</p>
 
-    <div>
+    <div class="keyboard">
         <div v-for="(keyboardRow, index) in keyboard.getKeyboardLayout()" v-bind:key="index">
             <span v-for="(character, index) in keyboardRow" v-bind:key="index" class="tile" :class="character.state">
                 {{ character.character }}
