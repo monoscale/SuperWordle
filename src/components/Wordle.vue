@@ -8,7 +8,7 @@ import { isWordAllowed, getWordsOfTheDay } from '../models/Words';
 import { Keyboard } from '@/models/Keyboard';
 
 const wordLength = 5;
-const wordlesToSolve = 1;
+const wordlesToSolve = 5;
 const attempts = wordlesToSolve + Math.max(Math.log2(wordlesToSolve), 5);
 
 let gameFinished = ref(false);
@@ -19,13 +19,12 @@ const words = getWordsOfTheDay(wordlesToSolve);
 let wordles = reactive(Array.from({ length: wordlesToSolve }, (val, index) => (new Wordle(words[index], attempts))));
 let keyboard = reactive(new Keyboard());
 
-
 window.addEventListener('keyup', onKeyup)
 onUnmounted(() => {
     window.removeEventListener('keyup', onKeyup)
 })
 
-function onKeyup(e: KeyboardEvent) {
+function onKeyup(e: KeyboardEvent): void {
     const key = e.key;
     if (/^[a-zA-Z]$/.test(key) && currentTile < wordLength) {
         fillTile(key.toUpperCase() as WordleCharacter);
@@ -42,27 +41,32 @@ function onKeyup(e: KeyboardEvent) {
     }
 }
 
-function fillTile(character: WordleCharacter) {
+function fillTile(character: WordleCharacter): void {
     getUncompletedWordles().forEach(wordle => wordle.setCharacterGuess(character));
 }
 
-function clearTile() {
+function clearTile(): void {
     getUncompletedWordles().forEach(wordle => wordle.clearCharacterGuess());
 }
 
-function checkGuess() {
+function checkGuess(): void {
     if (checkWordAllowed()) {
         keyboard.setCharactersFromWordAsUsed(wordles[0].getGuess());
         getUncompletedWordles().forEach(wordle => wordle.checkGuess());
-        currentTile = 0;
-        remainingAttempts.value--;
-        wordles = wordles.sort((a, b) => a.getSortOrder() - b.getSortOrder());
+
+        setTimeout(() => {
+            currentTile = 0;
+            remainingAttempts.value--;
+            wordles = wordles.sort((a, b) => a.getSortOrder() - b.getSortOrder());
+        }, 500)
+        
     }
 
     checkGameEnded();
 }
 
-function checkGameEnded() {
+
+function checkGameEnded(): void {
     let message: string | undefined;
     if (wordles.filter(x => !x.completed).length === 0) {
         message = 'You win';
@@ -86,8 +90,8 @@ function checkWordAllowed(): boolean {
     return true;
 }
 
-function getUncompletedWordles() {
-    return wordles.filter(x => !x.completed);
+function getUncompletedWordles(): Wordle[] {
+    return wordles.filter(x => !x.completed) as Wordle[];
 }
 
 </script>
