@@ -8,14 +8,12 @@ import { isWordAllowed, getWordsOfTheDay } from '../models/Words';
 import { Keyboard } from '@/models/Keyboard';
 
 const wordLength = 5;
-const wordlesToSolve = 64;
-const attempts = wordlesToSolve + Math.max(Math.log2(wordlesToSolve), 5) + 1;
+const wordlesToSolve = 1;
+const attempts = wordlesToSolve + Math.max(Math.log2(wordlesToSolve), 5);
 
-let message = ref('');
 let gameFinished = ref(false);
 let currentTile = 0;
 let remainingAttempts = ref(attempts);
-
 
 const words = getWordsOfTheDay(wordlesToSolve);
 let wordles = reactive(Array.from({ length: wordlesToSolve }, (val, index) => (new Wordle(words[index], attempts))));
@@ -61,12 +59,21 @@ function checkGuess() {
         wordles = wordles.sort((a, b) => a.getSortOrder() - b.getSortOrder());
     }
 
+    checkGameEnded();
+}
+
+function checkGameEnded() {
+    let message: string | undefined;
     if (wordles.filter(x => !x.completed).length === 0) {
-        message.value = 'You win';
+        message = 'You win';
         gameFinished.value = true;
     } else if (remainingAttempts.value === 0) {
-        message.value = 'You lose';
+        message = 'You lose';
         gameFinished.value = true;
+    }
+
+    if (message !== undefined) {
+        alert(message);
     }
 }
 
@@ -86,8 +93,7 @@ function getUncompletedWordles() {
 </script>
 
 <template>
-    <p v-if="remainingAttempts > 0">Attempts remaining: {{ remainingAttempts }}</p>
-    <p>{{ message }}</p>
+    <p>Attempts remaining: {{ remainingAttempts }}</p>
 
     <div>
         <div v-for="(keyboardRow, index) in keyboard.getKeyboardLayout()" v-bind:key="index">
@@ -162,6 +168,6 @@ function getUncompletedWordles() {
 }
 
 .tile.used {
-    background-color:lime;
+    background-color: lime;
 }
 </style>
