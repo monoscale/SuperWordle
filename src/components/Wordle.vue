@@ -8,7 +8,7 @@ import { isWordAllowed, getWordsOfTheDay } from '../models/Words';
 import { Keyboard } from '@/models/Keyboard';
 
 const wordLength = 5;
-const wordlesToSolve = 5;
+const wordlesToSolve = 64;
 const attempts = wordlesToSolve + Math.max(Math.log2(wordlesToSolve), 5);
 
 let gameFinished = ref(false);
@@ -105,6 +105,7 @@ function getUncompletedWordles(): Wordle[] {
 
 <template>
     <p>Attempts remaining: {{ remainingAttempts }}</p>
+    <p>Wordles to solve: {{ getUncompletedWordles().length }}</p>
 
     <div class="keyboard">
         <div v-for="(keyboardRow, index) in keyboard.getKeyboardLayout()" v-bind:key="index">
