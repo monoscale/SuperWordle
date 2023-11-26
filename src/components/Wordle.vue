@@ -152,6 +152,7 @@ function getUncompletedWordles(): Wordle[] {
 
 .tile.hint {
     border-radius: 5px;
+    color: white;
 }
 
 .tile.input {
