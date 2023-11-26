@@ -53,10 +53,10 @@ function checkGuess(): void {
     if (checkWordAllowed()) {
         keyboard.setCharactersFromWordAsUsed(wordles[0].getGuess());
         const uncompletedWordles = getUncompletedWordles();
-        for(let i = 0; i < uncompletedWordles.length; i++){
+        for (let i = 0; i < uncompletedWordles.length; i++) {
             const wordle = uncompletedWordles[i];
             wordle.checkGuess()
-            if(wordle.completed){
+            if (wordle.completed) {
                 foundWords.push(wordle.word);
             }
         }
@@ -66,7 +66,7 @@ function checkGuess(): void {
             remainingAttempts.value--;
             wordles = wordles.sort((a, b) => a.getSortOrder() - b.getSortOrder());
         }, 500)
-        
+
     }
 
     checkGameEnded();
@@ -159,26 +159,27 @@ function getUncompletedWordles(): Wordle[] {
 }
 
 .tile.absent {
-    background-color: lightgray;
+    background-color: slategray;
     color: white;
 }
 
 .tile.present {
-    background-color: yellow;
+    background-color: gold;
     color: black;
 }
 
-.tile.correct {
-    background-color: lime;
+.tile.correct,
+.tile.used {
+    background-color: greenyellow;
     color: black;
+}
+
+.tile.unused {
+    color: white;
 }
 
 .tile.invalid {
     background-color: red;
     color: white;
-}
-
-.tile.used {
-    background-color: lime;
 }
 </style>
