@@ -60,10 +60,10 @@ function checkGuess(): void {
                 foundWords.push(wordle.word);
             }
         }
-
+        currentTile = 0;
+        remainingAttempts.value--;
+        
         setTimeout(() => {
-            currentTile = 0;
-            remainingAttempts.value--;
             wordles = wordles.sort((a, b) => a.getSortOrder() - b.getSortOrder());
         }, 500)
 
@@ -104,16 +104,19 @@ function getUncompletedWordles(): Wordle[] {
 </script>
 
 <template>
-    <p>Attempts remaining: {{ remainingAttempts }}</p>
-    <p>Wordles to solve: {{ getUncompletedWordles().length }}</p>
+    <div class="sticky">
+        <p>Attempts remaining: {{ remainingAttempts }}</p>
+        <p>Wordles to solve: {{ getUncompletedWordles().length }}</p>
 
-    <div class="keyboard">
-        <div v-for="(keyboardRow, index) in keyboard.getKeyboardLayout()" v-bind:key="index">
-            <span v-for="(character, index) in keyboardRow" v-bind:key="index" class="tile" :class="character.state">
-                {{ character.character }}
-            </span>
+        <div class="keyboard">
+            <div v-for="(keyboardRow, index) in keyboard.getKeyboardLayout()" v-bind:key="index">
+                <span v-for="(character, index) in keyboardRow" v-bind:key="index" class="tile" :class="character.state">
+                    {{ character.character }}
+                </span>
+            </div>
         </div>
     </div>
+    
 
     <div>
         <div v-for="(wordle, index) in wordles" v-bind:key="index" class="wordle">
@@ -138,6 +141,14 @@ function getUncompletedWordles(): Wordle[] {
     display: inline-block;
     margin: 5px;
     vertical-align: top;
+}
+
+.sticky {
+    display: inline-block;
+    position: sticky;
+    top: 10px;
+    margin: 5px;
+    background-color: rgb(0, 0, 0, 0.75)
 }
 
 .tile {
