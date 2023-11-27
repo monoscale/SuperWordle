@@ -7,16 +7,17 @@ import { WordleCharacterState } from '@/models/WordleCharacterState';
 import { isWordAllowed, getWordsOfTheDay } from '../models/Words';
 import { Keyboard } from '@/models/Keyboard';
 
+const wordlesToSolve = parseInt(prompt('How many wordles do you want to solve?') ?? "1");
 const wordLength = 5;
-const wordlesToSolve = 64;
-const attempts = wordlesToSolve + Math.max(Math.log2(wordlesToSolve), 5);
+
+const attempts = wordlesToSolve + Math.round(Math.max(Math.log2(wordlesToSolve), 5));
 
 let gameFinished = ref(false);
 let currentTile = 0;
 let remainingAttempts = ref(attempts);
 let foundWords: string[] = [];
 const words = getWordsOfTheDay(wordlesToSolve);
-let wordles = reactive(Array.from({ length: wordlesToSolve }, (val, index) => (new Wordle(words[index], attempts))));
+let wordles = reactive(Array.from({ length: wordlesToSolve }, (val, index) => (new Wordle(words[index], attempts, wordLength))));
 let keyboard = reactive(new Keyboard());
 
 window.addEventListener('keyup', onKeyup)

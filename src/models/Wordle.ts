@@ -12,12 +12,12 @@ export class Wordle {
     private maximumAttempts: number;
     private currentGuessIndex: number = 0;
 
-    constructor(word: string, maximumAttempts: number) {
+    constructor(word: string, maximumAttempts: number, wordLength: number) {
         this.word = word;
         this.maximumAttempts = maximumAttempts - 1; // minus one because of zero based indexing
         this.guesses = [new WordleGuess()];
         this.currentGuess = this.guesses[0];
-        this.knownCharacters = Array.from({ length: 5 }, () => '');
+        this.knownCharacters = Array.from({ length: wordLength }, () => '');
     }
 
     public setCharacterGuess(character: WordleCharacter) {
